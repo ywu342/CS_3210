@@ -5,6 +5,7 @@
  * Added and Edited functions
  */
 
+#define MAX 1000000
 static int counter = 0;
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t cond;
@@ -14,7 +15,7 @@ int nodeadlock(char *action, int thread_id, int index) {
     //printf("Calling nodeadlock with thread_id %d to do %s\n", thread_id, action);
     if (action != NULL) {
         syscall(318, action, thread_id, index, &retval); // calling the newly defined system call
-        printf("INSIDE RETVAL = %d\n", retval);
+        //printf("INSIDE RETVAL = %d\n", retval);
         if (retval == -1) {
             printf("CRITICAL ERROR, TERMINATING.\n");
             exit(1);
@@ -26,8 +27,8 @@ int nodeadlock(char *action, int thread_id, int index) {
 int class_mutex_lock(class_mutex_ptr cmutex)
 {
     // Manually stopping the execution
-    if (counter > 1000) {
-        printf("bestOffer has called class_mutex_lock 100000 times. The execution will end\n");
+    if (counter >= MAX) {
+        printf("bestOffer has called class_mutex_lock %d times. The execution will end\n", MAX);
 //        exit(1);
     }
     else counter++;
@@ -47,7 +48,7 @@ int class_mutex_lock(class_mutex_ptr cmutex)
         fprintf(stdout, "Error: pthread mutex lock failed!\n");
         return -1;
     }
-    printf("THREAD ID: %d locked mutex: %p\n",thread_id, &cmutex->mutex);
+    //printf("THREAD ID: %d locked mutex: %p\n",thread_id, &cmutex->mutex);
     return 0;
 }
 
@@ -67,7 +68,7 @@ int class_mutex_unlock(class_mutex_ptr cmutex)
         fprintf(stdout, "Error: pthread mutex unlock failed!\n");
         return -1;
     }
-    printf("THREAD ID: %d unlocked mutex: %p\n",thread_id, &cmutex->mutex);
+    //printf("THREAD ID: %d unlocked mutex: %p\n",thread_id, &cmutex->mutex);
     return 0;
 }
 
@@ -84,7 +85,7 @@ int class_thread_create(class_thread_t * cthread, void *(*start)(void *), void *
     
     //Hacking a bit to get everything working correctly
     memcpy(cthread, &temp_pthread, sizeof(pthread_t));
-    printf("THREAD ID CREATE thread_id = %d, index = %d\n", (int) temp_pthread,index);
+    //printf("THREAD ID CREATE thread_id = %d, index = %d\n", (int) temp_pthread,index);
     nodeadlock("init", (int) temp_pthread, index++); // initialize two thread monitors
     return 0;
 }
