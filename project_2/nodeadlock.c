@@ -1,8 +1,10 @@
 #include <linux/kernel.h>
 #include <linux/syscalls.h>
-#include <linux/mutex.h>
 #include <linux/string.h>
-#include <linux/wait.h>
+
+/**
+ * This is the source code of the new system call
+ */
 
 typedef struct {
     int count;
@@ -65,17 +67,14 @@ static long nodeadlock_mutex_lock(int this_thread_id) {
     // getting two monitors according to the thread ids
     this_monitor = get_thread_by_id(this_thread_id);
     other_monitor = get_other_thread_by_id(this_thread_id);
-    
     if (this_monitor == NULL || other_monitor == NULL) {
         return -1;
     }
-    
-    // only allow locking for the current thread
+    // only allow locking for the current thread,
     // only if the other thread has not locked any and has been initialized
     if (other_monitor->count == 0 && other_monitor->ready == 1) {
         this_monitor->count += 1;
     }
-    
     return this_monitor->count; // when current thread count is zero, it means lock was not successful, so current thread should wait
 }
 
@@ -86,13 +85,10 @@ static long nodeadlock_mutex_unlock(int this_thread_id) {
     pthread_monitor *this_monitor;
     this_monitor = NULL;
     this_monitor = get_thread_by_id(this_thread_id);
-    
     if (this_monitor == NULL) {
         return -1;
     }
-    
     this_monitor->count -= 1; // decrement the locks current thread holds
-    
     return this_monitor->count;
 }
 
@@ -114,7 +110,6 @@ asmlinkage long sys_nodeadlock(const char *action, int thread_id, int index, int
             *retval = -1;
         }
     }
-    
     return 0;
 }
 

@@ -1,10 +1,11 @@
-To start, all commands are in quotes the commands do not need the quotes:
+Instructions to run the program
 
-1) run "make lib" or "make all"
+1. Recompile the kernel to add a new system call. The source code of the system call is in the file called “nodeadlock.c”
 
-2) run "export LD_LIBRARY_PATH=$(pwd):$LD_LIBRARY_PATH"
+2. After rebooting the newly compiled kernel, cd to the project_2 folder
 
-3) run "./bestoffer"
+3. run "make lib" or "make all"
 
-4) The program should stall after printing some output.  If anything else happens, seek help.
+4. run "export LD_LIBRARY_PATH=$(pwd):$LD_LIBRARY_PATH"
 
+5. run "./bestoffer"
