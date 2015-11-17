@@ -1,11 +1,20 @@
-Instructions to run the program
+Instructions on how to run our system:
 
 1. Recompile the kernel to add a new system call. The source code of the system call is in the file called “nodeadlock.c”
-
+	Edit Makefile for the new system call:
+		obj-y := nodeadlock.o
+	Edit Makefile for the kernel source code: 
+		core-y          := usr/ nodeadlock/
+	Edit arch/x86/syscalls/syscall_64.tbl: 
+		318     64      nodeadlock              sys_nodeadlock
+	Edit include/linux/syscalls.h:
+		asmlinkage long sys_nodeadlock(const char *action, int thread_id, int index, int* retval);
+	make
+	make install
+	reboot
 2. After rebooting the newly compiled kernel, cd to the project_2 folder
+3. Run the program
+4. run "make lib" or "make all"
+5. run "export LD_LIBRARY_PATH=$(pwd):$LD_LIBRARY_PATH"
+6. run "./bestoffer"
 
-3. run "make lib" or "make all"
-
-4. run "export LD_LIBRARY_PATH=$(pwd):$LD_LIBRARY_PATH"
-
-5. run "./bestoffer"
